@@ -3,11 +3,11 @@ using System.Data.SqlClient;
 
 namespace GymServer.Data
 {
-    public interface IDbConnection
+    public interface IDbConnectionn
     {
         public SqlConnection GetConnection { get; }
     }
-    public class DbConnection : IDbConnection
+    public class DbConnection : IDbConnectionn
     {
         IConfiguration Configuration;
 

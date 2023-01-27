@@ -3,6 +3,7 @@ using GymServer.Models;
 using GymServer.Data;
 using System.Data.Common;
 using Dapper;
+using System.Data;
 
 namespace GymServer.Controllers
 {
@@ -11,9 +12,9 @@ namespace GymServer.Controllers
     [Route("[controller]")]
     public class RegisterController : Controller
     {
-        private readonly IDbConnection _dbConnection;
+        private readonly IDbConnectionn _dbConnection;
 
-        public RegisterController(IDbConnection dbConnection)
+        public RegisterController(IDbConnectionn dbConnection)
         {
             _dbConnection = dbConnection;
         }
@@ -25,13 +26,31 @@ namespace GymServer.Controllers
   
             using (var conn = _dbConnection.GetConnection)
             {
-                string sqlQuery = "INSERT INTO Clients (Name, LastName,BirthDay,Phone,Email,Sex,Password) VALUES(@Name,@LastName,@BirthDay,@Phone,@Email,@Sex,@Password)";
+                string checksql = $"Select * from Clients WHERE [Email] = @Email";
+               var checer =  conn.QueryFirstOrDefault<RegisterModel>(checksql, new { Email = user.Email });
 
-                conn.Execute(sqlQuery, user);
+                if (checer == null)
+                {
+                    Console.WriteLine("YEs");
+                 
+
+                    string sqlQuery = "INSERT INTO Clients (Name, LastName,BirthDay,Phone,Email,Gender,Password) VALUES(@Name,@LastName,@BirthDay,@Phone,@Email,@Gender,@Password)";
+
+                    conn.Execute(sqlQuery, user);
+
+                    var query = $"SELECT * FROM [Clients] WHERE [Email] = @Email";
+                    var param = new DynamicParameters();
+                    param.Add("@Email", user.Email);
+                    var newUser = await conn.QueryFirstOrDefaultAsync<RegisterModel>(query, param: param, commandType: CommandType.Text);
+
+
+                    return Ok(newUser);
+                }
+                return BadRequest();
+                }
+
+
             }
-
-                return Ok();     
-        }
 
 
 
