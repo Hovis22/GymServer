@@ -4,23 +4,24 @@ using GymServer.Data;
 using System.Data.Common;
 using Dapper;
 using System.Data;
+using GymClient.Models;
 
 namespace GymServer.Controllers
 {
 
     [ApiController]
     [Route("[controller]")]
-    public class RegisterController : Controller
+    public class AuthController : Controller
     {
         private readonly IDbConnectionn _dbConnection;
 
-        public RegisterController(IDbConnectionn dbConnection)
+        public AuthController(IDbConnectionn dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<ActionResult<IEnumerable<RegisterModel>>> PostUser(RegisterModel user)
         {
   
@@ -49,8 +50,33 @@ namespace GymServer.Controllers
                 return BadRequest();
                 }
 
-
             }
+
+
+
+
+
+        [HttpPost("login")]
+        public async Task<ActionResult<IEnumerable<Client>>> LoginUser(LoginModel user)
+        {
+
+            using (var conn = _dbConnection.GetConnection)
+            {
+                string checksql = $"Select * from Clients WHERE [Email] = @Email AND [Password] = @Password";
+                var checer = conn.QueryFirstOrDefault<Client>(checksql, new { Email = user.Email,Password = user.Password });
+
+                if (checer != null)
+                {
+                    Console.WriteLine("YEsLogin");
+
+
+                    return Ok(checer);
+                }
+                return BadRequest();
+            }
+
+        }
+
 
 
 
