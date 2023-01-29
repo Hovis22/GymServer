@@ -30,6 +30,7 @@ BEGIN
 		Email VARCHAR(100) NOT NULL,
 		Gender VARCHAR(50) NOT NULL,
 		RoleId INT NOT NULL,
+        IMGPath VARCHAR(50),
 		Password VARCHAR(50) NOT NULL
         CONSTRAINT [FK_Personal_RoleId_Roles] FOREIGN KEY ([RoleId]) REFERENCES [dbo].[Roles] ([Id]) ON DELETE CASCADE
     )
@@ -49,6 +50,20 @@ BEGIN
 END
 
 
+
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='TypeOfTrain' and xtype='U')
+BEGIN
+    CREATE TABLE TypeOfTrain (
+        Id INT PRIMARY KEY IDENTITY (1, 1),
+        Name VARCHAR(100)  NOT NULL,
+    )
+END
+
+
+
+
+
+
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Schedule' and xtype='U')
 BEGIN
     CREATE TABLE Schedule (
@@ -56,7 +71,11 @@ BEGIN
         Name VARCHAR(100)  NOT NULL,
 		DateOfTrain Date NOT NULL,
 		CoachId INT NOT NULL,
-        CONSTRAINT [FK_Schedule_CoachId_Personal] FOREIGN KEY ([CoachId]) REFERENCES [dbo].[Personal] ([Id]) ON DELETE CASCADE
+        TypeId INT NOT NULL,
+        MaxPeople INT NOT NULL,
+        CountPeople INT NOT NULL,
+        CONSTRAINT [FK_Schedule_CoachId_Personal] FOREIGN KEY ([CoachId]) REFERENCES [dbo].[Personal] ([Id]) ON DELETE CASCADE,
+        CONSTRAINT [FK_Schedule_TypeId_Type] FOREIGN KEY ([TypeId]) REFERENCES [dbo].[TypeOfTrain] ([Id]) ON DELETE CASCADE
     )
 END
 

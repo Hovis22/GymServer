@@ -67,7 +67,6 @@ namespace GymServer.Controllers
 
                 if (checer != null)
                 {
-                    Console.WriteLine("YEsClient");
                     return Ok(checer);
                 }
 
@@ -76,7 +75,6 @@ namespace GymServer.Controllers
 
                 if (trainer != null)
                 {
-                    Console.WriteLine("YesTrain");
                     return Ok(trainer);
                 }
 
