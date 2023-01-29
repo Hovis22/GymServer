@@ -59,7 +59,7 @@ namespace GymServer.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<IEnumerable<Client>>> LoginUser(LoginModel user)
         {
-
+      
             using (var conn = _dbConnection.GetConnection)
             {
                 string checksql = $"Select * from Clients WHERE [Email] = @Email AND [Password] = @Password";
@@ -67,11 +67,21 @@ namespace GymServer.Controllers
 
                 if (checer != null)
                 {
-                    Console.WriteLine("YEsLogin");
-
-
+                    Console.WriteLine("YEsClient");
                     return Ok(checer);
                 }
+
+                string checksql2 = $"Select * from Personal WHERE [Email] = @Email AND [Password] = @Password";
+                var trainer = conn.QueryFirstOrDefault<Personal>(checksql2, new { Email = user.Email, Password = user.Password });
+
+                if (trainer != null)
+                {
+                    Console.WriteLine("YesTrain");
+                    return Ok(trainer);
+                }
+
+
+
                 return BadRequest();
             }
 
