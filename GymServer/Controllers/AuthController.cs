@@ -5,6 +5,7 @@ using System.Data.Common;
 using Dapper;
 using System.Data;
 using GymClient.Models;
+using GymServer.Classes;
 
 namespace GymServer.Controllers
 {
@@ -24,15 +25,16 @@ namespace GymServer.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<IEnumerable<RegisterModel>>> PostUser(RegisterModel user)
         {
-  
-            using (var conn = _dbConnection.GetConnection)
-            {
-                string checksql = $"Select * from Clients WHERE [Email] = @Email";
-               var checer =  conn.QueryFirstOrDefault<RegisterModel>(checksql, new { Email = user.Email });
+			CheckInfo check = new CheckInfo();
 
-                if (checer == null)
+
+               
+                if (await check.IsExist(user.Email,_dbConnection) == true)
                 {
-                    Console.WriteLine("YEs");
+                 
+			    using (var conn = _dbConnection.GetConnection)
+               { 
+
                  
 
                     string sqlQuery = "INSERT INTO Clients (Name, LastName,BirthDay,Phone,Email,Gender,Password) VALUES(@Name,@LastName,@BirthDay,@Phone,@Email,@Gender,@Password)";
@@ -47,9 +49,9 @@ namespace GymServer.Controllers
 
                     return Ok(newUser);
                 }
-                return BadRequest();
+              
                 }
-
+              return BadRequest();
             }
 
 

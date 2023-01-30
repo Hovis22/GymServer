@@ -69,7 +69,7 @@ BEGIN
     CREATE TABLE Schedule (
         Id INT PRIMARY KEY IDENTITY (1, 1),
         Name VARCHAR(100)  NOT NULL,
-		DateOfTrain Date NOT NULL,
+		DateOfTrain DateTime NOT NULL,
 		CoachId INT NOT NULL,
         TypeId INT NOT NULL,
         MaxPeople INT NOT NULL,

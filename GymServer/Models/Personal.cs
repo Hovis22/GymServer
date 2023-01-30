@@ -18,6 +18,8 @@
 
         public int RoleId { get; set; }
 
-        public string Password { get; set; }
+		public string IMGPath { get; set; }
+
+		public string Password { get; set; }
     }
 }
