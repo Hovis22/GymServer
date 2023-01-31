@@ -35,5 +35,29 @@ namespace GymServer.Classes
 		}
 
 
+
+
+		public async Task<bool> IsOnTrain(PeopleOnWorkouts peopleOn, IDbConnectionn _dbConnection)
+		{
+			using (var conn = _dbConnection.GetConnection)
+			{
+				string checksql = $"Select * from PeopleOnWorkouts WHERE [ClientId] = @ClientId AND [ScheduleId] = @ScheduledId";
+				var checer = conn.QueryFirstOrDefault<PeopleOnWorkouts>(checksql, new { ClientId = peopleOn.ClientId, ScheduledId = peopleOn.ScheduledId });
+
+				if (checer != null)
+				{
+					return false;
+				}
+
+			
+
+			}
+			return true;
+		}
+
+
+
+
+
 	}
 }

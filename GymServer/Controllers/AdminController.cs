@@ -53,15 +53,37 @@ namespace GymServer.Controllers
 		public async Task<ActionResult<IEnumerable<Schedule>>> PostSchedule(Schedule schedule)
 		{
 			
-			Console.WriteLine(123);
+			Console.WriteLine(schedule.userId);
 				using (var conn = _dbConnection.GetConnection)
 				{
 
+				   
 					string sqlQuery = "INSERT INTO Schedule (Name,DateOfTrain,TimeOfTrain,CoachId,TypeId,MaxPeople,CountPeople) VALUES (@Name,@DateOfTrain,@TimeOfTrain,@CoachId,@TypeId,@MaxPeople,@CountPeople)";
 
-					await conn.ExecuteAsync(sqlQuery, schedule);
+	
+
+				await conn.ExecuteAsync(sqlQuery, schedule);
+
+				
+
+			
+
+
+			
+				if (schedule.userId == null)
+				{
 					return Ok();
 				}
+               string sqlSch = "SELECT TOP 1 * FROM Schedule ORDER BY Id DESC";
+
+				var st = await conn.QueryFirstOrDefaultAsync<Schedule>(sqlSch);
+	          Console.WriteLine("st" + st.Id);
+				string sqlQuery2 = "INSERT INTO PeopleOnWorkouts (ClientId,ScheduleId) VALUES (@ClientId,@ScheduleId)";
+
+				await conn.ExecuteAsync(sqlQuery2, new { ClientId = schedule.userId, ScheduleId = st.Id });
+
+				return Ok();
+			}
 			
 			return BadRequest();
 		}
@@ -87,6 +109,24 @@ namespace GymServer.Controllers
 		}
 
 
+		[HttpGet("getusers")]
+		public async Task<ActionResult<IEnumerable<Client>>> GetFormUsers()
+		{
+
+			using (var conn = _dbConnection.GetConnection)
+			{
+
+				string sqlQuery = "Select * from Clients;";
+				var coaches = conn.Query<Client>(sqlQuery).ToList();
+
+				return Ok(coaches);
+			}
+
+			return BadRequest();
+		}
+
+
+
 		[HttpGet("getschedule")]
 		public async Task<ActionResult<IEnumerable<Personal>>> GetSchedule()
 		{
@@ -94,7 +134,7 @@ namespace GymServer.Controllers
 			using (var conn = _dbConnection.GetConnection)
 			{
 
-				string sqlQuery = "Select * from Schedule as s INNER JOIN Personal ON Personal.Id=s.CoachId where DATEDIFF(DAY,GETDATE(),s.DateOfTrain) < 7 and s.DateOfTrain >= GETDATE() AND TypeId = 2 ORDER BY s.DateOfTrain ASC;";
+				string sqlQuery = "Select * from Schedule as s INNER JOIN Personal ON Personal.Id=s.CoachId where DATEDIFF(DAY,GETDATE(),s.DateOfTrain) < 7 and s.DateOfTrain >= GETDATE() AND TypeId = 2 AND s.CountPeople<s.MaxPeople ORDER BY s.DateOfTrain ASC;";
 				var coaches = await conn.QueryAsync<Schedule, Personal,Schedule>(sqlQuery, (schedl, person) =>
 				{
 					schedl.personal = person;

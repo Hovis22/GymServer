@@ -114,3 +114,15 @@ END
 
 
 
+INSERT INTO Roles (Name) VALUES('Coach');
+INSERT INTO Roles (Name) VALUES('Admin');
+
+
+INSERT INTO TypeOfTrain (Name) VALUES('Solo');
+INSERT INTO TypeOfTrain (Name) VALUES('Group');
+
+
+
+
+INSERT INTO Personal (Name, LastName,BirthDay,Phone,Email,Gender,RoleId,IMGPath,Password) VALUES('admin','admin',convert(datetime,'18-06-12 10:34:09 PM',5),'9622367','admin@i.ua','Man','2',NULL,'123');
+
