@@ -25,8 +25,7 @@ namespace GymServer.Controllers
 		[HttpPost("usert")]
 		public async Task<ActionResult<IEnumerable<PeopleOnWorkouts>>> PostSchedule(PeopleOnWorkouts schedule)
 		{
-			Console.WriteLine(schedule.ScheduledId);
-
+			
 			CheckInfo check = new CheckInfo();
 			if (await check.IsOnTrain(schedule, _dbConnection) == false) { return BadRequest(); }
 	

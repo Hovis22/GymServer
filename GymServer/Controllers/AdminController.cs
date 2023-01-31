@@ -149,5 +149,26 @@ namespace GymServer.Controllers
 
 
 
+
+		[HttpPost("getcoachschedule")]
+		public async Task<ActionResult<IEnumerable<Personal>>> GetCoachSchedule(UserId userrid)
+		{
+
+			using (var conn = _dbConnection.GetConnection)
+			{
+
+				string sqlQuery = "Select * from Schedule as s  where DATEDIFF(DAY,GETDATE(),s.DateOfTrain) < 7 and s.DateOfTrain >= GETDATE() AND CoachId = @Id  ORDER BY s.DateOfTrain ASC;";
+				var coaches = await conn.QueryAsync<Schedule>(sqlQuery, new {Id= userrid.Id});
+
+				return Ok(coaches);
+			}
+
+			return BadRequest();
+		}
+
+
+
+
+
 	}
 }
